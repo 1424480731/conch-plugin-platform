@@ -1,0 +1,21 @@
+批量的对mongo内嵌数组的元素进行增加一个字段
+db.getCollection('cjzf').update({'id':'市名'}，{'$set':{'district_box.$[].page_index':[]}})
+删除
+db.getCollection('cjzf').update({'id':'市名'}，{'$unset':{'district_box.$[].detail_links':[]}})
+db.getCollection('cjzf').updateMany({'id':'市名'},{'$unset':{'district_box.$[].detail_links':[]}})
+批量查询内嵌数组中的一个字段的值
+db.getCollection('cjzf').find({"area" : "阿勒泰"},{'district_box.district_sign':1})
+
+多层内嵌数组更新
+db.getCollection('cjzf').update(
+   {'area_sign':'aletai'},
+   {  $set: {  "district_box.$[outter].road_box.$[inner].html_box.a":"after"  }  },
+   {  arrayFilters : [ {  "outter.road_box": {'$ne':null} },{  "inner.road_sign":'aletaishi'}]}
+)
+
+多层嵌套数组的查询
+db.getCollection('cjzf').aggregate([
+    {'$match': {"district_box.road_box.road_sign": 'alashanzuoqi'}},
+    {'$unwind': "$district_box"},
+    {'$match': {"district_box.road_box.road_sign": 'ejinaqi'}}
+]);
